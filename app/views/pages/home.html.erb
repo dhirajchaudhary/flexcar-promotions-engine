@@ -1,0 +1,68 @@
+<main>
+  <div class="items-grid">
+    <% @items.each do |item| %>
+      <div class="card">
+        <h3><%= item.name %></h3>
+        <div class="info">
+          <%= item.category&.name || "Uncategorized" %> • 
+          <%= item.weight? ? "Sold by weight" : "Sold by quantity" %>
+        </div>
+        <div class="price">
+          <%= number_to_currency(item.price_cents / 100.0) %>
+          <%= item.weight? ? " per 100g" : " each" %>
+        </div>
+
+        <%= form_with url: add_to_cart_path(item_id: item.id), method: :post, local: true do |f| %>
+          <% if item.quantity? %>
+            <%= f.number_field :quantity, value: 1, min: 1 %>
+          <% else %>
+            <%= f.number_field :weight_grams, value: 500, min: 100, step: 100, placeholder: "grams" %>
+          <% end %>
+          <%= f.submit "Add to Cart", class: "submit-btn" %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="cart">
+    <h2>Your Cart</h2>
+
+    <% if @cart.cart_items.any? %>
+      <% @cart.cart_items.each do |ci| %>
+        <div class="cart-item">
+          <strong><%= ci.item.name %></strong><br>
+          <small>
+            <% if ci.item.quantity? %>
+              <%= ci.quantity %> ×
+            <% else %>
+              <%= ci.weight_grams %>g
+            <% end %>
+          </small>
+          <% if ci.promotion_application %>
+            <div class="applied">
+              Applied: <%= ci.promotion_application.promotion.name %>
+            </div>
+            <div class="original">
+              <%= number_to_currency(ci.promotion_application.original_price_cents / 100.0) %>
+            </div>
+          <% end %>
+          <div style="float: right; font-weight: bold; color: #4f46e5;">
+            <%= number_to_currency(ci.final_price_cents / 100.0) %>
+          </div>
+          <div class="remove-btn">
+            <%= button_to "Remove", remove_from_cart_path(item_id: ci.item.id), method: :delete, form: { data: { turbo_confirm: "Remove?" } } %>
+          </div>
+        </div>
+      <% end %>
+
+      <div class="total-price">
+        Total: <%= number_to_currency(@cart.total_price) %>
+      </div>
+      <div class="savings">
+        You saved <%= number_to_currency(@cart.cart_items.sum { |ci| (ci.promotion_application&.original_price_cents || 0) - ci.final_price_cents } / 100.0) %>
+      </div>
+    <% else %>
+      <p class="empty">Your cart is empty</p>
+    <% end %>
+  </div>
+</main>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Flexcar - Promotions Engine</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+  <%= javascript_importmap_tags %>
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f8fafc;
+      color: #333;
+      line-height: 1.6;
+    }
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    header {
+      background: #4f46e5;
+      color: white;
+      padding: 1rem 0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    header .container { display: flex; justify-content: space-between; align-items: center; }
+    h1 { font-size: 1.8rem; font-weight: 600; }
+    .total { font-size: 1.6rem; font-weight: bold; }
+
+    main { margin-top: 30px; display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
+
+    .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
+    .card h3 { font-size: 1.4rem; margin-bottom: 8px; color: #1e293b; }
+    .price { font-size: 1.6rem; font-weight: bold; color: #4f46e5; margin: 12px 0; }
+    .info { color: #64748b; font-size: 0.95rem; margin-bottom: 15px; }
+    input[type="number"] {
+      padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; width: 100px;
+    }
+    button, input[type="submit"] {
+      background: #4f46e5; color: white; border: none; padding: 10px 16px;
+      border-radius: 8px; cursor: pointer; font-weight: 600; margin-top: 10px;
+    }
+    button:hover, input[type="submit"]:hover { background: #4338ca; }
+
+    .cart {
+      background: white; border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      height: fit-content; position: sticky; top: 20px;
+    }
+    .notice, .alert {
+      padding: 12px; margin: 15px 0; border-radius: 8px; font-weight: 600;
+    }
+    .notice { background: #d1fae5; color: #065f46; }
+    .alert  { background: #fee2e2; color: #991b1b; }
+    .cart h2 { font-size: 1.8rem; margin-bottom: 20px; color: #1e293b; }
+    .cart-item { padding: 15px 0; border-bottom: 1px solid #e2e8f0; }
+    .cart-item:last-child { border-bottom: none; }
+    .cart-item strong { font-size: 1.1rem; }
+    .applied { color: #16a34a; font-weight: 600; font-size: 0.9rem; margin-top: 4px; }
+    .original { text-decoration: line-through; color: #94a3b8; font-size: 0.9rem; }
+    .total-price { font-size: 1.8rem; font-weight: bold; color: #4f46e5; margin-top: 20px; }
+    .savings { color: #16a34a; font-weight: bold; margin-top: 8px; }
+    .remove-btn { color: #dc2626; font-size: 0.9rem; margin-top: 8px; cursor: pointer; }
+    .empty { text-align: center; color: #64748b; padding: 40px 0; font-size: 1.1rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>Flexcar Promotions Engine</h1>
+
+      <div style="display: flex; align-items: center; gap: 30px;">
+        <%= link_to "Admin Panel", admin_dashboard_path, 
+            style: "color: white; font-weight: 600; font-size: 1.1rem; text-decoration: underline;" %>
+        
+        <div class="total">
+          Cart Total: <%= number_to_currency(@cart&.total_price || 0) %>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <%= yield %>
+  </div>
+</body>
+</html>

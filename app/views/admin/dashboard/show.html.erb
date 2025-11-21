@@ -1,0 +1,58 @@
+<div class="container" style="margin-top: 40px;">
+  <div style="margin-top: 50px;">
+    <h3>
+      <%= link_to "Back to Shop", root_path, class: "remove-btn; " %>
+    </h3>
+  </div>
+  </br>
+  <h1 style="font-size: 2rem; margin-bottom: 30px; color: #1e293b;">Admin Panel – Create Data from UI</h1>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px;">
+
+    <div class="card">
+      <h3>Create Category</h3>
+      <%= render "category_form", category: Category.new %>
+    </div>
+
+    <div class="card">
+      <h3>Create Brand</h3>
+      <%= render "brand_form", brand: Brand.new %>
+    </div>
+
+    <div class="card">
+      <h3>Create Item</h3>
+      <%= form_with model: Item.new, local: true do |f| %>
+        <%= f.text_field :name, placeholder: "Name", required: true %><br>
+        <%= f.number_field :price_cents, placeholder: "Price in cents (e.g. 149)", step: 1, required: true %><br>
+        <%= f.select :unit, options_for_select([["By Quantity", 0], ["By Weight", 1]]) %><br>
+        <%= f.number_field :weight_per_unit_grams, placeholder: "Grams per unit (only for weight items)", value: 200 %><br>
+        <%= f.collection_select :category_id, Category.all, :id, :name, prompt: "Select Category" %><br>
+        <%= f.collection_select :brand_id, Brand.all, :id, :name, prompt: "Select Brand (optional)" %><br>
+        <%= f.submit "Create Item" %>
+      <% end %>
+    </div>
+
+    <div class="card">
+      <h3>Create Promotion</h3>
+      <%= form_with model: Promotion.new, local: true do |f| %>
+        <%= f.text_field :name, placeholder: "e.g. 20% off Electronics", required: true %><br>
+        <%= f.select :discount_type, 
+            options_for_select([
+              ["Percentage", 0],
+              ["Flat Amount", 1],
+              ["Buy X Get Y", 2],
+              ["Weight Threshold", 3]
+            ]) %><br>
+        <%= f.number_field :discount_value, placeholder: "value of discount", step: 0.01 %><br>
+        <%= f.number_field :buy_quantity, placeholder: "Buy X (for BxGy)" %>
+        <%= f.number_field :get_quantity, placeholder: "Get Y (for BxGy)" %>
+        <%= f.number_field :threshold_grams, placeholder: "Min grams for weight discount" %><br>
+        <%= f.collection_select :item_id, Item.all.uniq, :id, :name, prompt: "Apply to specific item (optional)" %><br>
+        <%= f.collection_select :category_id, Category.all, :id, :name, prompt: "Apply to category (optional)" %><br>
+        <%= f.label :start_time, "Start Time" %><br>
+        <%= f.datetime_local_field :start_time, value: Time.current.strftime("%Y-%m-%dT%H:%M") %><br>
+        <%= f.submit "Create Promotion" %>
+      <% end %>
+    </div>
+  </div>
+</div>
